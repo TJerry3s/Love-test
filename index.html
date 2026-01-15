@@ -6,11 +6,19 @@
     <meta name="description" content="恋爱倾向测试——探索你的恋爱风格">
     <title>恋爱倾向测试</title>
 
-    <!-- Vue 3 - 使用国内 CDN (baomitu) -->
-    <script src="https://lib.baomitu.com/vue/3.4.21/vue.global.prod.js"></script>
+    <!-- DNS预解析 -->
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
-    <!-- html2canvas - 用于截图保存 -->
-    <script src="https://lib.baomitu.org/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" as="script">
+
+    <!-- Vue 3 - 使用更快的CDN -->
+    <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js"></script>
+
+    <!-- html2canvas - 延迟加载 -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
 
     <style>
         * {
