@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="恋爱倾向测试——探索你的恋爱风格">
+    <title>恋爱倾向测试</title>
+
+    <!-- Vue 3 - 使用国内 CDN (baomitu) -->
+    <script src="https://lib.baomitu.com/vue/3.4.21/vue.global.prod.js"></script>
+
+    <!-- html2canvas - 用于截图保存 -->
+    <script src="https://lib.baomitu.org/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+                'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8E53 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        #app {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(255, 107, 157, 0.3);
+            padding: 30px;
+            min-height: 500px;
+        }
+
+        /* 首页样式 */
+        .home-page {
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #FF6B9D;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .info-card {
+            background: #FFF5F8;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            border-left: 4px solid #FF6B9D;
+        }
+
+        .info-card h3 {
+            color: #FF6B9D;
+            margin-bottom: 10px;
+        }
+
+        .info-card ul {
+            padding-left: 20px;
+        }
+
+        .info-card li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8E53 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.6);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #FFA726 0%, #FF7043 100%);
+        }
+
+        .btn-small {
+            padding: 8px 20px;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        /* 测试页面样式 */
+        .test-page {
+            padding: 20px 0;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #FF6B9D 0%, #FF8E53 100%);
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .question-card {
+            margin: 30px 0;
+        }
+
+        .question-number {
+            color: #FF6B9D;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 24px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: #FFF5F8;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background: #FFE0EC;
+            border-color: #FF6B9D;
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #FF6B9D15 0%, #FF8E5315 100%);
+            border-color: #FF6B9D;
+        }
+
+        .option-value {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8E53 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .option-label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .option-description {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        /* 结果页面样式 */
+        .result-page {
+            padding: 20px 0;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .result-main-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #FF6B9D;
+            margin-bottom: 10px;
+        }
+
+        .result-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .result-time {
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* 主要恋爱类型卡片 */
+        .main-type-card {
+            background: linear-gradient(135deg, #FFF5F8 0%, #FFE0EC 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            border: 2px solid #FF6B9D;
+        }
+
+        .type-emoji {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+
+        .type-name {
+            font-size: 32px;
+            font-weight: bold;
+            color: #FF6B9D;
+            margin-bottom: 10px;
+        }
+
+        .type-tagline {
+            font-size: 18px;
+            color: #FF8E53;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8E53 100%);
+            color: white;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* 雷达图区域 */
+        .radar-section {
+            margin: 30px 0;
+        }
+
+        .radar-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .radar-chart {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* 维度得分表格 */
+        .dimension-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .dimension-table th {
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8E53 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .dimension-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 16px;
+        }
+
+        .dimension-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .level-high {
+            background: #FFCDD2;
+            color: #C62828;
+        }
+
+        .level-medium {
+            background: #FFE0B2;
+            color: #EF6C00;
+        }
+
+        .level-low {
+            background: #E0E0E0;
+            color: #616161;
+        }
+
+        /* 类型详细解读 */
+        .analysis-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .analysis-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #FF6B9D;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .analysis-block {
+            margin-bottom: 20px;
+        }
+
+        .analysis-block h4 {
+            color: #FF8E53;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .analysis-block ul {
+            padding-left: 20px;
+        }
+
+        .analysis-block li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        /* 建议区域 */
+        .suggestion-section {
+            background: #FFF5F8;
+            border-left: 4px solid #FF6B9D;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .suggestion-section h3 {
+            color: #FF6B9D;
+            margin-bottom: 15px;
+        }
+
+        .suggestion-block {
+            margin-bottom: 15px;
+        }
+
+        .suggestion-label {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8E53 100%);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+
+        .suggestion-text {
+            line-height: 1.8;
+            color: #333;
+        }
+
+        /* 匹配类型区域 */
+        .match-section {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .match-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1976D2;
+            margin-bottom: 20px;
+        }
+
+        .match-types {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .match-type-badge {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: #1976D2;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
+        }
+
+        .match-description {
+            color: #1976D2;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+
+        .match-stars {
+            color: #FFC107;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        /* 分享区域 */
+        .share-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 60px 40px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #FF6B9D;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            font-size: 18px;
+            margin-top: 20px;
+            color: #FF6B9D;
+            font-weight: 500;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .question-text {
+                font-size: 20px;
+            }
+
+            .option {
+                padding: 12px 15px;
+            }
+
+            .option-label {
+                font-size: 16px;
+            }
+
+            .type-name {
+                font-size: 24px;
+            }
+
+            .radar-chart {
+                width: 250px;
+                height: 250px;
+            }
+
+            .dimension-table th,
+            .dimension-table td {
+                padding: 10px 5px;
+                font-size: 14px;
+            }
+        }
+
+        /* 动画效果 */
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.3s;
+        }
+
+        .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+        }
+
+        .slide-enter-active, .slide-leave-active {
+            transition: all 0.3s;
+        }
+
+        .slide-enter-from {
+            transform: translateX(30px);
+            opacity: 0;
+        }
+
+        .slide-leave-to {
+            transform: translateX(-30px);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <!-- 加载中 -->
+            <div v-if="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <p>正在加载，请稍候...</p>
+            </div>
+
+            <!-- 首页 -->
+            <div v-else-if="currentPage === 'home'" class="home-page">
+                <div class="logo">💕</div>
+                <h1>恋爱倾向测试</h1>
+                <p class="subtitle">探索你的恋爱风格，发现最适合你的相处模式</p>
+
+                <div class="info-card">
+                    <h3>📋 测试说明</h3>
+                    <ul>
+                        <li>本测试包含 20 道题目，预计需要 3-5 分钟完成</li>
+                        <li>请根据您的<strong>真实想法和感受</strong>作答</li>
+                        <li>每题有 5 个选项，选择最符合您情况的选项</li>
+                        <li>测试结果仅供娱乐和自我探索参考</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>🌟 测试维度</h3>
+                    <ul>
+                        <li><strong>激情型</strong>：对心动体验和浪漫的重视程度</li>
+                        <li><strong>理智型</strong>：对现实条件和理性规划的重视程度</li>
+                        <li><strong>奉献型</strong>：愿意为对方付出的程度</li>
+                        <li><strong>依赖型</strong>：对情感陪伴和依赖的需求程度</li>
+                        <li><strong>独立型</strong>：保持自我空间和独立性的需求程度</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>🔒 隐私保护</h3>
+                    <ul>
+                        <li>您的测试数据仅保存在本地浏览器中</li>
+                        <li>我们不会收集或上传您的个人信息</li>
+                    </ul>
+                </div>
+
+                <button class="btn" @click="startTest">开始测试</button>
+            </div>
+
+            <!-- 测试页面 -->
+            <div v-else-if="currentPage === 'test'" class="test-page">
+                <div class="progress-bar">
+                    <div class="progress-fill" :style="{width: progress + '%'}"></div>
+                </div>
+                <div class="progress-text">
+                    第 {{ currentQuestionIndex + 1 }} 题 / 共 20 题
+                </div>
+
+                <transition name="slide" mode="out-in">
+                    <div :key="currentQuestionIndex" class="question-card">
+                        <div class="question-number">题目 {{ currentQuestionIndex + 1 }}</div>
+                        <div class="question-text">{{ currentQuestion.text }}</div>
+
+                        <div class="options">
+                            <div
+                                v-for="option in answerOptions"
+                                :key="option.value"
+                                class="option"
+                                :class="{selected: answers[currentQuestionIndex] === option.value}"
+                                @click="selectAnswer(option.value)"
+                            >
+                                <div class="option-value">{{ option.value }}</div>
+                                <div>
+                                    <div class="option-label">{{ option.label }}</div>
+                                    <div class="option-description">{{ option.description }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+
+                <div class="navigation">
+                    <button
+                        class="btn btn-secondary"
+                        @click="previousQuestion"
+                        :disabled="currentQuestionIndex === 0"
+                    >
+                        上一题
+                    </button>
+                    <button
+                        class="btn"
+                        @click="nextQuestion"
+                        :disabled="!answers[currentQuestionIndex]"
+                    >
+                        {{ currentQuestionIndex === 19 ? '提交测试' : '下一题' }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- 结果页面 -->
+            <div v-else-if="currentPage === 'result'" class="result-page">
+                <!-- 顶部标题区 -->
+                <div class="result-header">
+                    <h1 class="result-main-title">💕 恋爱倾向测试结果</h1>
+                    <p class="result-subtitle">探索你的恋爱风格</p>
+                    <p class="result-time">测试时间：{{ formatResultTime(result.timestamp) }}</p>
+                </div>
+
+                <!-- 主要恋爱类型 -->
+                <div class="main-type-card">
+                    <div class="type-emoji">{{ result.loveTypeInfo.emoji }}</div>
+                    <div class="type-name">你的恋爱类型是：{{ result.loveType }}</div>
+                    <div class="type-tagline">{{ result.loveTypeInfo.tagline }}</div>
+                    <div class="type-badge">{{ result.loveType }}</div>
+                </div>
+
+                <!-- 雷达图 -->
+                <div class="radar-section">
+                    <h3 style="text-align: center; color: #FF6B9D; margin-bottom: 15px;">五维倾向分析</h3>
+                    <div class="radar-container">
+                        <svg class="radar-chart" viewBox="0 0 300 300">
+                            <defs>
+                                <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FF6B9D;stop-opacity:0.6" />
+                                    <stop offset="100%" style="stop-color:#FF8E53;stop-opacity:0.6" />
+                                </linearGradient>
+                            </defs>
+
+                            <!-- 背景五边形网格 -->
+                            <g v-for="level in 4" :key="level">
+                                <polygon
+                                    :points="getRadarPoints(level * 4)"
+                                    fill="none"
+                                    :stroke="level === 4 ? '#FF6B9D' : '#e0e0e0'"
+                                    stroke-width="1"
+                                />
+                            </g>
+
+                            <!-- 维度标签 -->
+                            <text x="150" y="25" text-anchor="middle" fill="#333" font-size="14" font-weight="bold">激情型</text>
+                            <text x="270" y="110" text-anchor="middle" fill="#333" font-size="14" font-weight="bold">理智型</text>
+                            <text x="235" y="250" text-anchor="middle" fill="#333" font-size="14" font-weight="bold">奉献型</text>
+                            <text x="65" y="250" text-anchor="middle" fill="#333" font-size="14" font-weight="bold">依赖型</text>
+                            <text x="30" y="110" text-anchor="middle" fill="#333" font-size="14" font-weight="bold">独立型</text>
+
+                            <!-- 得分标签 -->
+                            <text x="150" y="45" text-anchor="middle" fill="#FF6B9D" font-size="12">{{ result.dimensionScores.激情型 }}分</text>
+                            <text x="255" y="125" text-anchor="middle" fill="#FF6B9D" font-size="12">{{ result.dimensionScores.理智型 }}分</text>
+                            <text x="220" y="235" text-anchor="middle" fill="#FF6B9D" font-size="12">{{ result.dimensionScores.奉献型 }}分</text>
+                            <text x="80" y="235" text-anchor="middle" fill="#FF6B9D" font-size="12">{{ result.dimensionScores.依赖型 }}分</text>
+                            <text x="50" y="125" text-anchor="middle" fill="#FF6B9D" font-size="12">{{ result.dimensionScores.独立型 }}分</text>
+
+                            <!-- 用户得分区域 -->
+                            <polygon
+                                :points="getUserRadarPoints()"
+                                fill="url(#radarGradient)"
+                                stroke="#FF6B9D"
+                                stroke-width="2"
+                            />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 维度得分详情表 -->
+                <h3 style="text-align: center; color: #FF6B9D; margin: 30px 0 20px;">维度得分详情</h3>
+                <table class="dimension-table">
+                    <thead>
+                        <tr>
+                            <th>维度</th>
+                            <th>得分</th>
+                            <th>等级</th>
+                            <th>类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(score, dimension) in result.dimensionScores" :key="dimension">
+                            <td style="text-align: left; padding-left: 20px;">{{ getDimensionEmoji(dimension) }} {{ dimension }}</td>
+                            <td><strong>{{ score }}</strong></td>
+                            <td>
+                                <span class="level-badge" :class="getDimensionLevel(dimension, score).class">
+                                    {{ getDimensionLevel(dimension, score).level }}
+                                </span>
+                            </td>
+                            <td>{{ getDimensionLevel(dimension, score).label }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- 类型详细解读 -->
+                <div class="analysis-section">
+                    <h3 class="analysis-title">{{ result.loveTypeInfo.emoji }} {{ result.loveType }}详细解读</h3>
+
+                    <div class="analysis-block">
+                        <h4>✨ 类型特征</h4>
+                        <ul>
+                            <li v-for="feature in result.loveTypeInfo.features" :key="feature">{{ feature }}</li>
+                        </ul>
+                    </div>
+
+                    <div class="analysis-block">
+                        <h4>💪 优点</h4>
+                        <ul>
+                            <li v-for="strength in result.loveTypeInfo.strengths" :key="strength">{{ strength }}</li>
+                        </ul>
+                    </div>
+
+                    <div class="analysis-block">
+                        <h4>⚠️ 注意事项</h4>
+                        <ul>
+                            <li v-for="weakness in result.loveTypeInfo.weaknesses" :key="weakness">{{ weakness }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 恋爱建议 -->
+                <div class="suggestion-section">
+                    <h3>💡 恋爱建议</h3>
+
+                    <div class="suggestion-block">
+                        <span class="suggestion-label">🎯 择偶建议</span>
+                        <p class="suggestion-text">{{ result.loveTypeInfo.suggestions.partner }}</p>
+                    </div>
+
+                    <div class="suggestion-block">
+                        <span class="suggestion-label">💕 相处建议</span>
+                        <p class="suggestion-text">{{ result.loveTypeInfo.suggestions.relationship }}</p>
+                    </div>
+
+                    <div class="suggestion-block">
+                        <span class="suggestion-label">🌱 自我成长</span>
+                        <p class="suggestion-text">{{ result.loveTypeInfo.suggestions.growth }}</p>
+                    </div>
+                </div>
+
+                <!-- 最佳匹配类型 -->
+                <div class="match-section">
+                    <h3 class="match-title">💑 最佳匹配类型</h3>
+                    <div class="match-stars">★★★★☆</div>
+                    <div class="match-types">
+                        <span v-for="matchType in result.loveTypeInfo.matchTypes" :key="matchType" class="match-type-badge">
+                            {{ matchType }}
+                        </span>
+                    </div>
+                    <p class="match-description">{{ result.loveTypeInfo.matchDescription }}</p>
+                </div>
+
+                <!-- 分享区域 -->
+                <div class="share-section">
+                    <h3>📤 保存测试结果</h3>
+                    <p style="color: #666; margin-bottom: 20px;">
+                        您可以保存测试结果，随时查看您的恋爱倾向报告
+                    </p>
+
+                    <button class="btn" @click="saveResultAsImage" :disabled="savingImage">
+                        {{ savingImage ? '生成中...' : (imageSaved ? '✓ 已保存' : '📷 保存为图片') }}
+                    </button>
+
+                    <p style="color: #999; font-size: 12px; margin-top: 15px;">
+                        💡 提示：点击上方按钮可将测试结果保存为图片
+                    </p>
+
+                    <button class="btn btn-secondary btn-small" @click="restartTest" style="margin-top: 20px;">
+                        🔄 重新测试
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { questions, answerOptions } from './data/questions.js';
+        import { calculateLoveResult, getDimensionLevel } from './utils/calculator.js';
+
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    loading: false,
+
+                    // 页面状态
+                    currentPage: 'home', // home, test, result
+
+                    // 测试数据
+                    questions,
+                    answerOptions,
+                    answers: new Array(20).fill(null),
+                    currentQuestionIndex: 0,
+                    result: null,
+
+                    // 保存图片状态
+                    savingImage: false,
+                    imageSaved: false
+                };
+            },
+            computed: {
+                progress() {
+                    const answered = this.answers.filter(a => a !== null).length;
+                    return (answered / 20) * 100;
+                },
+                currentQuestion() {
+                    return this.questions[this.currentQuestionIndex];
+                }
+            },
+            methods: {
+                // 开始测试
+                startTest() {
+                    this.currentPage = 'test';
+                    this.answers = new Array(20).fill(null);
+                    this.currentQuestionIndex = 0;
+                },
+
+                // 选择答案
+                selectAnswer(value) {
+                    this.answers[this.currentQuestionIndex] = value;
+
+                    // 延迟后自动跳转
+                    setTimeout(() => {
+                        if (this.currentQuestionIndex < 19) {
+                            this.nextQuestion();
+                        }
+                    }, 300);
+                },
+
+                // 下一题
+                nextQuestion() {
+                    if (this.currentQuestionIndex < 19) {
+                        this.currentQuestionIndex++;
+                        // 跳过已回答的题目
+                        while (this.currentQuestionIndex < 19 && this.answers[this.currentQuestionIndex] !== null) {
+                            this.currentQuestionIndex++;
+                        }
+                    } else {
+                        this.submitTest();
+                    }
+                    window.scrollTo(0, 0);
+                },
+
+                // 上一题
+                previousQuestion() {
+                    if (this.currentQuestionIndex > 0) {
+                        this.currentQuestionIndex--;
+                        window.scrollTo(0, 0);
+                    }
+                },
+
+                // 提交测试
+                submitTest() {
+                    if (this.answers.some(a => a === null)) {
+                        alert('请完成所有题目后再提交');
+                        return;
+                    }
+
+                    // 计算结果
+                    this.result = calculateLoveResult(this.answers);
+                    this.currentPage = 'result';
+                    window.scrollTo(0, 0);
+                },
+
+                // 重新测试
+                restartTest() {
+                    if (confirm('确定要重新开始测试吗？当前结果将被清除。')) {
+                        this.currentPage = 'home';
+                        this.answers = new Array(20).fill(null);
+                        this.result = null;
+                    }
+                },
+
+                // 保存结果为图片
+                async saveResultAsImage() {
+                    try {
+                        this.savingImage = true;
+                        this.imageSaved = false;
+
+                        const element = document.querySelector('.result-page');
+
+                        const canvas = await html2canvas(element, {
+                            scale: 2,
+                            useCORS: true,
+                            backgroundColor: '#ffffff',
+                            logging: false
+                        });
+
+                        canvas.toBlob((blob) => {
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.download = `恋爱倾向测试结果_${new Date().toLocaleDateString('zh-CN')}.png`;
+                            link.href = url;
+                            link.click();
+
+                            URL.revokeObjectURL(url);
+
+                            this.savingImage = false;
+                            this.imageSaved = true;
+
+                            setTimeout(() => {
+                                this.imageSaved = false;
+                            }, 3000);
+                        });
+                    } catch (error) {
+                        console.error('保存图片失败:', error);
+                        alert('保存失败，请重试或使用截图工具保存');
+                        this.savingImage = false;
+                        this.imageSaved = false;
+                    }
+                },
+
+                // 格式化结果时间
+                formatResultTime(timestamp) {
+                    if (!timestamp) return '';
+                    const date = new Date(timestamp);
+                    return date.toLocaleString('zh-CN');
+                },
+
+                // 获取维度等级
+                getDimensionLevel(dimension, score) {
+                    return getDimensionLevel(dimension, score);
+                },
+
+                // 获取维度emoji
+                getDimensionEmoji(dimension) {
+                    const emojis = {
+                        激情型: '🔥',
+                        理智型: '🧠',
+                        奉献型: '🎁',
+                        依赖型: '🤝',
+                        独立型: '🌿'
+                    };
+                    return emojis[dimension];
+                },
+
+                // 获取雷达图背景点
+                getRadarPoints(radius) {
+                    const centerX = 150;
+                    const centerY = 150;
+                    const angles = [-90, -18, 54, 126, 198]; // 五个维度的角度
+
+                    return angles.map(angle => {
+                        const radian = (angle * Math.PI) / 180;
+                        const x = centerX + radius * Math.cos(radian);
+                        const y = centerY + radius * Math.sin(radian);
+                        return `${x},${y}`;
+                    }).join(' ');
+                },
+
+                // 获取用户得分雷达图点
+                getUserRadarPoints() {
+                    const centerX = 150;
+                    const centerY = 150;
+                    const maxRadius = 80; // 最大半径
+                    const angles = [-90, -18, 54, 126, 198]; // 五个维度的角度
+                    const dimensions = ['激情型', '理智型', '奉献型', '依赖型', '独立型'];
+
+                    return dimensions.map((dimension, index) => {
+                        const score = this.result.dimensionScores[dimension];
+                        const radius = (score / 20) * maxRadius; // 最大得分是20
+                        const angle = angles[index];
+                        const radian = (angle * Math.PI) / 180;
+                        const x = centerX + radius * Math.cos(radian);
+                        const y = centerY + radius * Math.sin(radian);
+                        return `${x},${y}`;
+                    }).join(' ');
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
